@@ -55,6 +55,12 @@
     <Filter Include="ソース ファイル\Fan">
       <UniqueIdentifier>{2574ea8c-ea47-4c5e-ae82-17dc4f757b74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\paper">
+      <UniqueIdentifier>{fce004c6-e7f4-4d78-ae1c-05c449531598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\paper">
+      <UniqueIdentifier>{1131514a-42fe-45a3-863f-7d2dd209c27e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -86,6 +92,15 @@
     </ClCompile>
     <ClCompile Include="math\Matrix4.cpp">
       <Filter>ソース ファイル\math</Filter>
+    </ClCompile>
+    <ClCompile Include="Paper.cpp">
+      <Filter>ソース ファイル\paper</Filter>
+    </ClCompile>
+    <ClCompile Include="PaperCircle.cpp">
+      <Filter>ソース ファイル\paper</Filter>
+    </ClCompile>
+    <ClCompile Include="PaperAirplane.cpp">
+      <Filter>ソース ファイル\paper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +194,18 @@
     <ClInclude Include="player\Fan.h">
       <Filter>ヘッダー ファイル\Fan</Filter>
     </ClInclude>
+    <ClInclude Include="Paper.h">
+      <Filter>ヘッダー ファイル\paper</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="PaperAirplane.h">
+      <Filter>ヘッダー ファイル\paper</Filter>
+    </ClInclude>
+    <ClInclude Include="PaperCircle.h">
+      <Filter>ヘッダー ファイル\paper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\SpritePS.hlsl">
@@ -219,5 +246,10 @@
     <None Include="Resources\shaders\Primitive.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXGame.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

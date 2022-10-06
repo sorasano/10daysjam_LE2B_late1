@@ -1,7 +1,4 @@
 #include "Fan.h"
-#include "Affine.h"
-#include "FanWind.h"
-#include "Matrix4.h"
 
 //初期化
 void Fan::Initialize(Model* model, uint32_t textureHandle) {
@@ -29,53 +26,18 @@ void Fan::Initialize(Model* model, uint32_t textureHandle) {
 void Fan::Update() {
 
 	//デスフラグの立った球を削除
-	bullets_.remove_if([](std::unique_ptr<FanWind>&bullet) {
+	bullets_.remove_if([](std::unique_ptr<FanWind>& bullet) {
 		return bullet->IsDead();
-	});
+		});
 
-	//キャラクターの移動ベクトル
-	Vector3 move = { 0.0f,0.0f,0.0f };
-
-	//キャラクターの移動速さ
-	const float speed = 0.2f;
-
-	//移動ベクトルの変更
-	if (input_->PushKey(DIK_LEFT)) {
-		move = { -speed,0,0 };
-	}
-	else if (input_->PushKey(DIK_RIGHT)) {
-		move = { speed,0,0 };
-	}
-
-	if (input_->PushKey(DIK_UP)) {
-		move = { 0,speed,0 };
-	}
-	else if (input_->PushKey(DIK_DOWN)) {
-		move = { 0,-speed,0 };
-	}
-
-	//移動限界座標
-	const float kMoveLimitX = 34;
-	const float kMoveLimitY = 18;
-
-	//ベクトルの加算
-	worldtransform_.translation_.x += move.x;
-	worldtransform_.translation_.y += move.y;
-	worldtransform_.translation_.z += move.z;
-
-	worldtransform_.translation_.x = max(worldtransform_.translation_.x, -kMoveLimitX);
-	worldtransform_.translation_.x = min(worldtransform_.translation_.x, kMoveLimitX);
-	worldtransform_.translation_.y = max(worldtransform_.translation_.y, -kMoveLimitY);
-	worldtransform_.translation_.y = min(worldtransform_.translation_.y, kMoveLimitY);
-
-	//行列更新
-	worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(affine_->Rot_.x), affine_->RotY(affine_->Rot_.y), affine_->RotZ(affine_->Rot_.z)), affine_->Trans(worldtransform_.translation_));
-	//worldtransform_.TransferMatrix();
-
-	//debugText_->SetPos(0, 0);
-	//debugText_->Printf("FanPos(%f,%f,%f)", worldtransform_.translation_.x, worldtransform_.translation_.y, worldtransform_.translation_.z);
+	Move();
+	debugText_->SetPos(0, 0);
+	debugText_->Printf("FanPos(%f,%f,%f)", worldtransform_.translation_.x, worldtransform_.translation_.y, worldtransform_.translation_.z);
+	debugText_->SetPos(0, 20);
+	debugText_->Printf("mode = %d", mode);
 
 	Rotate();
+
 	//キャラクター攻撃処理
 	Attack();
 
@@ -133,22 +95,45 @@ void Fan::Rotate() {
 
 void Fan::Attack() {
 
+	if (mode == 0) {
+		measureWindPower();
+	}
+	debugText_->SetPos(0, 40);
+	debugText_->Printf("windPower = %f", windPower);
+
 	if (input_->TriggerKey(DIK_SPACE)) {
 
-		//弾の速度
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		if (mode == 0) {
 
-		//速度ベクトルを自機の向きに合わせて回転させる
-		velocity = transform(velocity, affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)));
+			//弾の速度
+			const float kBulletSpeed = 1.0f;
+			Vector3 velocity(0, 0, kBulletSpeed);
 
-		//弾を生成し初期化
-		std::unique_ptr<FanWind> newBullet = std::make_unique<FanWind>();
-		newBullet->Initialize(model_, worldtransform_.translation_,velocity);
+			//速度ベクトルを自機の向きに合わせて回転させる
+			velocity = transform(velocity, affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)));
 
-		//弾を登録する
-		bullets_.push_back(std::move(newBullet));
+			//弾を生成し初期化
+			std::unique_ptr<FanWind> newBullet = std::make_unique<FanWind>();
+			newBullet->Initialize(model_, worldtransform_.translation_, velocity);
+
+			//弾を登録する
+			bullets_.push_back(std::move(newBullet));
+
+			mode = 4;
+
+		}
+		else {
+
+			if (mode != 4) {
+				mode = 0;
+				windPower = 0;
+			}
+
+		}
+
 	}
+
+
 
 }
 
@@ -164,5 +149,61 @@ Vector3 Fan::GetWorldPosition() {
 }
 
 void Fan::OnCollision() {
+
+}
+
+void Fan::Move() {
+
+	ModeChange();
+
+	//キャラクターの移動ベクトル
+	Vector3 move = { 0.0f,0.0f,0.0f };
+
+	//移動ベクトルの変更
+	if (mode == 1) {
+		move = { -speed,0,0 };
+	}
+	else if (mode == 2) {
+		move = { speed,0,0 };
+	}
+
+	//ベクトルの加算
+	worldtransform_.translation_.x += move.x;
+	worldtransform_.translation_.y += move.y;
+	worldtransform_.translation_.z += move.z;
+
+	////移動限界座標
+	//const float kMoveLimitX = 34;
+	//const float kMoveLimitY = 18;
+
+	//worldtransform_.translation_.x = max(worldtransform_.translation_.x, -kMoveLimitX);
+	//worldtransform_.translation_.x = min(worldtransform_.translation_.x, kMoveLimitX);
+	//worldtransform_.translation_.y = max(worldtransform_.translation_.y, -kMoveLimitY);
+	//worldtransform_.translation_.y = min(worldtransform_.translation_.y, kMoveLimitY);
+
+	//行列更新
+	worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(affine_->Rot_.x), affine_->RotY(affine_->Rot_.y), affine_->RotZ(affine_->Rot_.z)), affine_->Trans(worldtransform_.translation_));
+
+}
+
+void Fan::ModeChange() {
+
+	//プレイヤーの座標が限界値に行ったら向きを変更する
+	if (worldtransform_.translation_.x <= moveLimitLeft) {
+		mode = 2;
+	}
+	else if (worldtransform_.translation_.x >= moveLimitRight) {
+		mode = 1;
+	}
+
+}
+
+void Fan::measureWindPower() {
+
+	if (windPower >= maxPower) {
+		windPower = 0;
+	}
+
+	windPower += powerSpeed;
 
 }

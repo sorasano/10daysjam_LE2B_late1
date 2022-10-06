@@ -29,6 +29,15 @@ public:
 	//攻撃
 	void Attack();
 
+	//移動
+	void Move();
+
+	//mode変更
+	void ModeChange();
+
+	//風量ゲージ(パワーを測る)
+	void measureWindPower();
+
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
 
@@ -51,6 +60,23 @@ private:
 
 	//アフィン行列
 	Affine* affine_;
+
+	//扇風機の状態 0停止 1右 2左 3発射後
+	int mode = 1;
+
+	//キャラクターの移動速さ
+	const float speed = 0.1f;
+
+	//移動限界距離
+	int moveLimitLeft = -20;
+	int moveLimitRight = 20;
+
+	//風量
+	float windPower = 0;
+	//風量の上昇量
+	float powerSpeed = 0.1;
+	//風量の限界値
+	float maxPower = 20;
 
 private:
 	//弾

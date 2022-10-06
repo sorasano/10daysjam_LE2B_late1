@@ -101,6 +101,9 @@
     <ClCompile Include="math\Affine.cpp" />
     <ClCompile Include="math\Matrix4.cpp" />
     <ClCompile Include="math\Vector3.cpp" />
+    <ClCompile Include="Paper.cpp" />
+    <ClCompile Include="PaperAirplane.cpp" />
+    <ClCompile Include="PaperCircle.cpp" />
     <ClCompile Include="player\Fan.cpp" />
     <ClCompile Include="player\FanWind.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
@@ -133,8 +136,12 @@
     <ClInclude Include="math\Vector2.h" />
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
+    <ClInclude Include="Paper.h" />
+    <ClInclude Include="PaperAirplane.h" />
+    <ClInclude Include="PaperCircle.h" />
     <ClInclude Include="player\Fan.h" />
     <ClInclude Include="player\FanWind.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="scene\GameScene.h" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +189,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Sprite.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXGame.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
