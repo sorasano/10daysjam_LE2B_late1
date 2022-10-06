@@ -11,7 +11,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete model_;
 	delete debugCamera_;
-	delete player_;
+	delete fan_;
 
 }
 
@@ -28,9 +28,9 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 
 	//自キャラの生成
-	player_ = new Player();
+	fan_ = new Fan();
 	//自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	fan_->Initialize(model_, textureHandle_);
 
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -50,7 +50,7 @@ void GameScene::Update() {
 	debugCamera_->Update();
 
 	//自キャラの更新
-	player_->Update();
+	fan_->Update();
 
 
 }
@@ -83,7 +83,7 @@ void GameScene::Draw() {
 	/// </summary>
 
 	//自キャラの更新
-	player_->Draw(viewProjection_);
+	fan_->Draw(viewProjection_);
 
 
 	//当たり判定
@@ -121,13 +121,13 @@ void GameScene::CheckAllCollisions() {
 	Vector3 posA, posB;
 
 	//自弾リストの取得
-	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
+	const std::list<std::unique_ptr<FanWind>>& playerBullets = fan_->GetBullets();
 }
 //
 //#pragma region 自キャラと敵弾の当たり判定
 //
 //	//自キャラの座標
-//	posA = player_->GetWorldPosition();
+//	posA = fan_->GetWorldPosition();
 //	//自キャラと敵弾すべての当たり判定
 //	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
 //		//敵弾の座標
@@ -140,7 +140,7 @@ void GameScene::CheckAllCollisions() {
 //		if (((posA.x - posB.x) * (posA.x - posB.x)) + ((posA.y - posB.y) * (posA.y - posB.y)) + ((posA.z - posB.z) * (posA.z - posB.z)) <= ((posAR + posBR) * (posAR + posBR))) {
 //
 //			//自キャラの衝突時コールバックを呼び出す
-//			player_->OnCollision();
+//			fan_->OnCollision();
 //			//敵弾の衝突時コールバックを呼び出す
 //			bullet->OnCollision();
 //

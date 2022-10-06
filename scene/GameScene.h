@@ -11,7 +11,7 @@
 #include "WorldTransform.h"
 #include <DirectXMath.h>
 #include "DebugCamera.h"
-#include "Player.h"
+#include "Fan.h"
 #include "Affine.h"
 
 /// <summary>
@@ -72,7 +72,7 @@ private: // メンバ変数
 	bool isDebugCameraActive_ = false;
 
 	//自キャラ
-	Player* player_ = nullptr;
+	Fan* fan_ = nullptr;
 
 	////アフィン変換
 	//Affine* affine_ = nullptr;

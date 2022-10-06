@@ -4,7 +4,7 @@
 #include "WorldTransform.h"
 #include "Affine.h"
 
-class PlayerBullet
+class FanWind
 {
 public:
 	void Initialize(Model *model,const Vector3& position,const Vector3& velocity);

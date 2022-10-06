@@ -6,12 +6,12 @@
 #include "DebugText.h"
 #include "Input.h"
 #include "Affine.h"
-#include "PlayerBullet.h"
+#include "FanWind.h"
 #include <memory>
 #include <list>
 #include "Matrix4.h"
 
-class Player {
+class Fan {
 
 public:
 	//初期化
@@ -36,7 +36,7 @@ public:
 	void OnCollision();
 
 	//弾リストを取得
-	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
+	const std::list<std::unique_ptr<FanWind>>& GetBullets() { return bullets_; }
 
 private:
 	//ワールド変換データ
@@ -54,5 +54,5 @@ private:
 
 private:
 	//弾
-	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+	std::list<std::unique_ptr<FanWind>> bullets_;
 };

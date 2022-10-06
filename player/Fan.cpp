@@ -1,10 +1,10 @@
-#include "Player.h"
+#include "Fan.h"
 #include "Affine.h"
-#include "PlayerBullet.h"
+#include "FanWind.h"
 #include "Matrix4.h"
 
 //初期化
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Fan::Initialize(Model* model, uint32_t textureHandle) {
 
 	////NULLポインタチェック
 	//assert(model);
@@ -26,10 +26,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 };
 
 //更新
-void Player::Update() {
+void Fan::Update() {
 
 	//デスフラグの立った球を削除
-	bullets_.remove_if([](std::unique_ptr<PlayerBullet>&bullet) {
+	bullets_.remove_if([](std::unique_ptr<FanWind>&bullet) {
 		return bullet->IsDead();
 	});
 
@@ -73,32 +73,32 @@ void Player::Update() {
 	//worldtransform_.TransferMatrix();
 
 	//debugText_->SetPos(0, 0);
-	//debugText_->Printf("PlayerPos(%f,%f,%f)", worldtransform_.translation_.x, worldtransform_.translation_.y, worldtransform_.translation_.z);
+	//debugText_->Printf("FanPos(%f,%f,%f)", worldtransform_.translation_.x, worldtransform_.translation_.y, worldtransform_.translation_.z);
 
 	Rotate();
 	//キャラクター攻撃処理
 	Attack();
 
 	//弾更新
-	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
+	for (std::unique_ptr<FanWind>& bullet : bullets_) {
 		bullet->Update();
 	}
 };
 
 //描画
-void Player::Draw(ViewProjection& viewProjection_) {
+void Fan::Draw(ViewProjection& viewProjection_) {
 
 	//3Dモデルを描画
 	model_->Draw(worldtransform_, viewProjection_, textureHandle_);
 
 	//弾描画
-	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
+	for (std::unique_ptr<FanWind>& bullet : bullets_) {
 		bullet->Draw(viewProjection_);
 	}
 
 };
 
-void Player::Rotate() {
+void Fan::Rotate() {
 
 
 	//キャラクターの移動ベクトル
@@ -126,12 +126,12 @@ void Player::Rotate() {
 	worldtransform_.TransferMatrix();
 
 	//debugText_->SetPos(0, 20);
-	//debugText_->Printf("PlayerRot(%f,%f,%f)", worldtransform_.rotation_.x, worldtransform_.rotation_.y, worldtransform_.rotation_.z);
+	//debugText_->Printf("FanRot(%f,%f,%f)", worldtransform_.rotation_.x, worldtransform_.rotation_.y, worldtransform_.rotation_.z);
 
 
 };
 
-void Player::Attack() {
+void Fan::Attack() {
 
 	if (input_->TriggerKey(DIK_SPACE)) {
 
@@ -143,7 +143,7 @@ void Player::Attack() {
 		velocity = transform(velocity, affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)));
 
 		//弾を生成し初期化
-		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+		std::unique_ptr<FanWind> newBullet = std::make_unique<FanWind>();
 		newBullet->Initialize(model_, worldtransform_.translation_,velocity);
 
 		//弾を登録する
@@ -152,7 +152,7 @@ void Player::Attack() {
 
 }
 
-Vector3 Player::GetWorldPosition() {
+Vector3 Fan::GetWorldPosition() {
 	//ワールド座標を入れる変数
 	Vector3 worldPos;
 	//ワールド行列の平行移動成分を取得
@@ -163,6 +163,6 @@ Vector3 Player::GetWorldPosition() {
 	return worldPos;
 }
 
-void Player::OnCollision() {
+void Fan::OnCollision() {
 
 }

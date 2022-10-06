@@ -1,7 +1,7 @@
-#include "PlayerBullet.h"
+#include "FanWind.h"
 #include "GameScene.h"
 
-void PlayerBullet::Initialize(Model* model, const Vector3& position,const Vector3& velocity) {
+void FanWind::Initialize(Model* model, const Vector3& position,const Vector3& velocity) {
 
 	//NULLポインタチェック
 	assert(model);
@@ -22,7 +22,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position,const Vector
 
 }
 
-void PlayerBullet::Update() {
+void FanWind::Update() {
 
 	//座標を移動させる
 	worldtransform_.translation_ += velocity_;
@@ -36,18 +36,18 @@ void PlayerBullet::Update() {
 
 }
 
-void PlayerBullet::Draw(const ViewProjection& viewProjection) {
+void FanWind::Draw(const ViewProjection& viewProjection) {
 
 	//3Dモデルを描画
 	model_->Draw(worldtransform_, viewProjection, textureHandle_);
 
 }
 
-void PlayerBullet::OnCollision() {
+void FanWind::OnCollision() {
 	isDead_ = true;
 }
 
-Vector3 PlayerBullet::GetWorldPosition() {
+Vector3 FanWind::GetWorldPosition() {
 	//ワールド座標を入れる変数
 	Vector3 worldPos;
 	//ワールド行列の平行移動成分を取得
