@@ -13,6 +13,7 @@
 #include "DebugCamera.h"
 #include "Fan.h"
 #include "Affine.h"
+#include "Paper.h"
 
 /// <summary>
 /// ゲームシーン
@@ -73,6 +74,9 @@ private: // メンバ変数
 
 	//自キャラ
 	Fan* fan_ = nullptr;
+
+	//紙
+	Paper* paper_ = nullptr;
 
 	////アフィン変換
 	//Affine* affine_ = nullptr;

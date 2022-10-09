@@ -1,38 +1,41 @@
 #include "PaperAirplane.h"
 #include "GameScene.h"
 
-void PaperAirplane::Initialize(Model* model, uint32_t textureHandle) {
+void PaperAirplane::Initialize(Model* model, uint32_t textureHandle,Vector3 trans,Vector3 rot) {
 
 	//NULLポインタチェック
 	assert(model);
 
 	model_ = model;
 	//テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("mario.jpg");
-
-	//ワールド変換初期化
-	worldtransform_.Initialize();
-	////引数で受け取った初期座標をセット
-	//worldtransform_.translation_ = { position.x,position.y,position.z };
-
-	//velocity_ = velocity;
+	textureHandle_ = TextureManager::Load("paperAirplane.png");
 
 	//アフィン行列
 	affine_ = new Affine();
+
+	//ワールド変換初期化
+	worldtransform_.Initialize();
+	//引数で受け取った初期座標をセット
+	worldtransform_.translation_ = { trans.x,trans.y,trans.z };
+	worldtransform_.rotation_ = { rot.x,rot.y,rot.z };
+
+	//行列更新
+	worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)), affine_->Trans(worldtransform_.translation_));
+	worldtransform_.TransferMatrix();
 
 }
 
 void PaperAirplane::Update() {
 
-	//座標を移動させる
-	worldtransform_.translation_ += velocity_;
-	//行列更新
-	worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(affine_->Rot_.x), affine_->RotY(affine_->Rot_.y), affine_->RotZ(affine_->Rot_.z)), affine_->Trans(worldtransform_.translation_));
-	worldtransform_.TransferMatrix();
+	////座標を移動させる
+	//worldtransform_.translation_ += velocity_;
+	////行列更新
+	//worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(affine_->Rot_.x), affine_->RotY(affine_->Rot_.y), affine_->RotZ(affine_->Rot_.z)), affine_->Trans(worldtransform_.translation_));
+	//worldtransform_.TransferMatrix();
 
-	if (--deathTimer_ <= 0) {
-		isDead_ = true;
-	}
+	//if (--deathTimer_ <= 0) {
+	//	isDead_ = true;
+	//}
 
 }
 

@@ -8,7 +8,7 @@ class PaperAirplane
 {
 public:
 
-	void Initialize(Model* model,uint32_t textureHandle);
+	void Initialize(Model* model,uint32_t textureHandle,Vector3 trans, Vector3 rot);
 
 	void Update();
 
@@ -29,9 +29,6 @@ private:
 	Model* model_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-
-	//速度
-	Vector3 velocity_;
 
 	//寿命
 	static const int32_t kLifeTime = 60 * 5;

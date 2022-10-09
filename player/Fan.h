@@ -78,6 +78,8 @@ private:
 	//•——Ê‚ÌŒÀŠE’l
 	float maxPower = 20;
 
+	int push = 0;
+
 private:
 	//’e
 	std::list<std::unique_ptr<FanWind>> bullets_;

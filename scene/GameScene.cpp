@@ -12,7 +12,7 @@ GameScene::~GameScene() {
 	delete model_;
 	delete debugCamera_;
 	delete fan_;
-
+	delete paper_;
 }
 
 void GameScene::Initialize() {
@@ -32,10 +32,19 @@ void GameScene::Initialize() {
 	//自キャラの初期化
 	fan_->Initialize(model_, textureHandle_);
 
+	//紙の生成
+	paper_ = new Paper();
+	//自キャラの初期化
+	paper_->Initialize(model_, model_, textureHandle_, textureHandle_);
+
+	//視点座標
+	viewProjection_.eye = {0,30,-30};
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	//デバックカメラの生成
 	debugCamera_ = new DebugCamera(500, 500);
+
+	viewProjection_.eye.y = 50;
 
 	//軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -52,6 +61,7 @@ void GameScene::Update() {
 	//自キャラの更新
 	fan_->Update();
 
+	paper_->Update();
 
 }
 
@@ -85,6 +95,8 @@ void GameScene::Draw() {
 	//自キャラの更新
 	fan_->Draw(viewProjection_);
 
+	//紙描画
+	paper_->Draw(viewProjection_);
 
 	//当たり判定
 	CheckAllCollisions();
@@ -121,8 +133,7 @@ void GameScene::CheckAllCollisions() {
 	Vector3 posA, posB;
 
 	//自弾リストの取得
-	const std::list<std::unique_ptr<FanWind>>& playerBullets = fan_->GetBullets();
-}
+	const std::list<std::unique_ptr<FanWind>>& fanWinds = fan_->GetBullets();
 //
 //#pragma region 自キャラと敵弾の当たり判定
 //
@@ -182,11 +193,11 @@ void GameScene::CheckAllCollisions() {
 //#pragma region 自弾と敵弾の当たり判定
 //
 //	//自弾と敵弾の当たり判定
-//	for (const std::unique_ptr<PlayerBullet>& playerBullet : playerBullets) {
-//		for (const std::unique_ptr<EnemyBullet>& enemyBullet : enemyBullets) {
+//	for (const std::unique_ptr<FanWind>& fanwind : fanWinds) {
+//		for (int i = 0; i < 10;i++) {
 //
 //			//自弾の座標
-//			posA = playerBullet->GetWorldPosition();
+//			posA = fanwind->GetWorldPosition();
 //			//敵弾の座標
 //			posB = enemyBullet->GetWorldPosition();
 //
@@ -207,4 +218,4 @@ void GameScene::CheckAllCollisions() {
 //		}
 //	}
 //#pragma endregion
-//}
+}

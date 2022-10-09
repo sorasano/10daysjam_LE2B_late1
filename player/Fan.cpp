@@ -95,45 +95,46 @@ void Fan::Rotate() {
 
 void Fan::Attack() {
 
+	if (input_->PushKey(DIK_SPACE)) {
+
+		push = 1;
+
+		if (mode != 0 && mode != 4) {
+			mode = 0;
+			windPower = 0;
+		}  
+	}
+	else {
+		push = 0;
+	}
+
+	debugText_->SetPos(0, 100);
+	debugText_->Printf("%d", push);
+
+	//’â~’†‚ÉƒQ[ƒW‚ğ•t‚¯‚é
 	if (mode == 0) {
 		measureWindPower();
 	}
-	debugText_->SetPos(0, 40);
-	debugText_->Printf("windPower = %f", windPower);
 
-	if (input_->TriggerKey(DIK_SPACE)) {
+	if (mode == 0 && push == 0) {
 
-		if (mode == 0) {
+		//’e‚Ì‘¬“x
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
 
-			//’e‚Ì‘¬“x
-			const float kBulletSpeed = 1.0f;
-			Vector3 velocity(0, 0, kBulletSpeed);
+		//‘¬“xƒxƒNƒgƒ‹‚ğ©‹@‚ÌŒü‚«‚É‡‚í‚¹‚Ä‰ñ“]‚³‚¹‚é
+		velocity = transform(velocity, affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)));
 
-			//‘¬“xƒxƒNƒgƒ‹‚ğ©‹@‚ÌŒü‚«‚É‡‚í‚¹‚Ä‰ñ“]‚³‚¹‚é
-			velocity = transform(velocity, affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)));
+		//’e‚ğ¶¬‚µ‰Šú‰»
+		std::unique_ptr<FanWind> newBullet = std::make_unique<FanWind>();
+		newBullet->Initialize(model_, worldtransform_.translation_, velocity);
 
-			//’e‚ğ¶¬‚µ‰Šú‰»
-			std::unique_ptr<FanWind> newBullet = std::make_unique<FanWind>();
-			newBullet->Initialize(model_, worldtransform_.translation_, velocity);
+		//’e‚ğ“o˜^‚·‚é
+		bullets_.push_back(std::move(newBullet));
 
-			//’e‚ğ“o˜^‚·‚é
-			bullets_.push_back(std::move(newBullet));
-
-			mode = 4;
-
-		}
-		else {
-
-			if (mode != 4) {
-				mode = 0;
-				windPower = 0;
-			}
-
-		}
+		mode = 4;
 
 	}
-
-
 
 }
 
