@@ -37,6 +37,16 @@ void PaperAirplane::Update() {
 	//	isDead_ = true;
 	//}
 
+	Vector3 velocity_ = {0,0,1};
+
+	if (move == 1) {
+		//s—ñXV
+		worldtransform_.translation_ += velocity_;
+		worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)), affine_->Trans(worldtransform_.translation_));
+		worldtransform_.TransferMatrix();
+
+	}
+
 }
 
 void PaperAirplane::Draw(const ViewProjection& viewProjection) {
@@ -47,7 +57,7 @@ void PaperAirplane::Draw(const ViewProjection& viewProjection) {
 }
 
 void PaperAirplane::OnCollision() {
-	isDead_ = true;
+	move = 1;
 }
 
 Vector3 PaperAirplane::GetWorldPosition() {

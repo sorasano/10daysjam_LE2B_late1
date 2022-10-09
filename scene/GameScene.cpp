@@ -190,32 +190,32 @@ void GameScene::CheckAllCollisions() {
 //
 //#pragma endregion
 //
-//#pragma region 自弾と敵弾の当たり判定
-//
-//	//自弾と敵弾の当たり判定
-//	for (const std::unique_ptr<FanWind>& fanwind : fanWinds) {
-//		for (int i = 0; i < 10;i++) {
-//
-//			//自弾の座標
-//			posA = fanwind->GetWorldPosition();
-//			//敵弾の座標
-//			posB = enemyBullet->GetWorldPosition();
-//
-//			//半径
-//			float posAR = 1;
-//			float posBR = 1;
-//
-//			if (((posA.x - posB.x) * (posA.x - posB.x)) + ((posA.y - posB.y) * (posA.y - posB.y)) + ((posA.z - posB.z) * (posA.z - posB.z)) <= ((posAR + posBR) * (posAR + posBR))) {
-//
-//				//自弾の衝突時コールバックを呼び出す
-//				playerBullet->OnCollision();
-//				//敵弾の衝突時コールバックを呼び出す
-//				enemyBullet->OnCollision();
-//
-//				//debugText_->SetPos(0, 40);
-//				//debugText_->Printf("atatta");
-//			}
-//		}
-//	}
-//#pragma endregion
+#pragma region 自弾と敵弾の当たり判定
+
+	//自弾と敵弾の当たり判定
+	for (const std::unique_ptr<FanWind>& fanwind : fanWinds) {
+		for (int i = 0; i < 10;i++) {
+
+			//自弾の座標
+			posA = fanwind->GetWorldPosition();
+			//敵弾の座標
+			posB = paper_->GetWorldPosition(i);
+
+			//半径
+			float posAR = 1;
+			float posBR = 1;
+
+			if (((posA.x - posB.x) * (posA.x - posB.x)) + ((posA.y - posB.y) * (posA.y - posB.y)) + ((posA.z - posB.z) * (posA.z - posB.z)) <= ((posAR + posBR) * (posAR + posBR))) {
+
+				//自弾の衝突時コールバックを呼び出す
+				fanwind->OnCollision();
+				//敵弾の衝突時コールバックを呼び出す
+				paper_->OnCollision(i);
+
+				//debugText_->SetPos(0, 40);
+				//debugText_->Printf("atatta");
+			}
+		}
+	}
+#pragma endregion
 }

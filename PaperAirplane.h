@@ -37,6 +37,9 @@ private:
 	//デスフラグ
 	bool isDead_ = false;
 
+	//0 停止 1 移動
+	int move = 0;
+
 	//アフィン行列
 	Affine* affine_ = nullptr;
 };

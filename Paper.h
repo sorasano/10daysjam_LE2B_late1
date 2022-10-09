@@ -35,6 +35,10 @@ public:
 	//描画
 	void Draw(ViewProjection& viewProjection_);
 
+	Vector3 GetWorldPosition(int i);
+
+	void OnCollision(int i);
+
 private:
 	//ワールド変換データ
 	WorldTransform worldtransform_;

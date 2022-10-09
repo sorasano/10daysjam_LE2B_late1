@@ -41,6 +41,9 @@ void Paper::Update() {
 		Set();
 	}
 
+	for(int i = 0;i < 10;i++){
+		paperAirplane_[i]->Update();
+	}
 	debugText_->SetPos(0, 80);
 	debugText_->Printf("PaperTrans[0] = (%f,%f,%f)\nPaperTrans[1] = (%f,%f,%f)", trans[0].x, trans[0].y, trans[0].z, trans[1].x, trans[1].y, trans[1].z);
 
@@ -124,3 +127,14 @@ void Paper::Draw(ViewProjection& viewProjection_) {
 	//model_->Draw(worldtransform_, viewProjection_, textureHandle_);
 
 };
+
+Vector3 Paper::GetWorldPosition(int i) {
+
+	Vector3 Pos = trans[i];
+	return Pos;
+
+}
+
+void Paper::OnCollision(int i) {
+	paperAirplane_[i]->OnCollision();
+}
