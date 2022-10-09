@@ -25,10 +25,10 @@ void Paper::Initialize(Model* planeModel, Model* circleModel, uint32_t planeText
 	//アフィン行列
 	affine_ = new Affine();
 
-	for (int i = 0; i < max; i++) {
-		paperAirplane_[i] = new PaperAirplane;
-		paperCircle_[i] = new PaperCircle;
-	}
+	//for (int i = 0; i < max; i++) {
+	//	paperAirplane_[i] = new PaperAirplane;
+	//	paperCircle_[i] = new PaperCircle;
+	//}
 
 };
 
@@ -49,12 +49,20 @@ void Paper::Update() {
 //配置
 void Paper::Set() {
 
-	for (int i = 0; i < max; i++) {
+	//for (int i = 0; i < max; i++) {
 
-		SetTrans(i);
-		SetRot(i);
-		paperAirplane_[i]->Initialize(planeModel_,planeTextureHandle_,trans[i],rot[i]);
+	//	SetTrans(i);
+	//	SetRot(i);
 
+	//}
+
+	int num = 0;
+
+	for (std::unique_ptr<PaperAirplane>& paperAirplane : paperAirplanes_) {
+		SetTrans(num);
+		SetRot(num);
+		paperAirplane->Initialize(planeModel_,planeTextureHandle_,trans[num],rot[num]);
+		num++;
 	}
 
 
@@ -116,10 +124,11 @@ void Paper::SetRot(int i) {
 void Paper::Draw(ViewProjection& viewProjection_) {
 
 	if (flag != 0) {
-		for (int i = 0; i < max; i++) {
-			paperAirplane_[i]->Draw(viewProjection_);
+		for (std::unique_ptr<PaperAirplane>& paperAirplane : paperAirplanes_) {
+			paperAirplane->Draw(viewProjection_);
 		}
 	}
+
 	////3Dモデルを描画
 	//model_->Draw(worldtransform_, viewProjection_, textureHandle_);
 

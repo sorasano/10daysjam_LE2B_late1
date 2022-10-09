@@ -35,6 +35,13 @@ public:
 	//描画
 	void Draw(ViewProjection& viewProjection_);
 
+	//弾リストを取得
+	const std::list<std::unique_ptr<PaperAirplane>>& GetAirplanes() { return paperAirplanes_; }
+
+	//弾リストを取得
+	const std::list<std::unique_ptr<PaperCircle>>& GetCircles() { return paperCircles_; }
+
+
 private:
 	//ワールド変換データ
 	WorldTransform worldtransform_;
@@ -56,9 +63,12 @@ private:
 	//配置する数
 	const int max = 10;
 
-	PaperAirplane *paperAirplane_[10];
-	PaperCircle *paperCircle_[10];
-	
+	//PaperAirplane *paperAirplane_[10];
+	//PaperCircle *paperCircle_[10];
+	//弾
+	std::list<std::unique_ptr<PaperAirplane>> paperAirplanes_;
+	std::list<std::unique_ptr<PaperCircle>> paperCircles_;
+
 	int flag = 0;
 
 	//座標
