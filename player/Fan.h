@@ -47,6 +47,8 @@ public:
 	//弾リストを取得
 	const std::list<std::unique_ptr<FanWind>>& GetBullets() { return bullets_; }
 
+	float GetWindPower();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldtransform_;
@@ -76,7 +78,7 @@ private:
 	//風量の上昇量
 	float powerSpeed = 0.1;
 	//風量の限界値
-	float maxPower = 20;
+	float maxPower = 10;
 
 	int push = 0;
 

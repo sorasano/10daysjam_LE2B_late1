@@ -1,4 +1,5 @@
 #include "Paper.h"
+const double PI = 3.141592653589;
 
 //初期化
 void Paper::Initialize(Model* planeModel, Model* circleModel, uint32_t planeTextureHandle, uint32_t circleTextureHandle) {
@@ -28,12 +29,25 @@ void Paper::Initialize(Model* planeModel, Model* circleModel, uint32_t planeText
 	for (int i = 0; i < max; i++) {
 		paperAirplane_[i] = new PaperAirplane;
 		paperCircle_[i] = new PaperCircle;
-	}
 
+
+		//飛行機か丸型かランダム
+		//乱数シード生成器
+		std::random_device seed_gen;
+		//メルセンヌ・ツイスター
+		std::mt19937_64 engine(seed_gen());
+		//乱数範囲
+		std::uniform_real_distribution<float> typeDist(0, 1.2);
+
+		type[i] = typeDist(engine);
+	}
 };
 
 //更新
 void Paper::Update() {
+
+	debugText_->SetPos(0, 120);
+	debugText_->Printf("PaperRot[0] = (%f,%f,%f)\nPaperRot[1] = (%f,%f,%f)", rot[0].x, rot[0].y, rot[0].z, rot[1].x, rot[1].y, rot[1].z);
 
 	flag++;
 
@@ -41,11 +55,14 @@ void Paper::Update() {
 		Set();
 	}
 
-	for(int i = 0;i < 10;i++){
-		paperAirplane_[i]->Update();
+	for(int i = 0;i < max;i++){
+		if (type[i] == 0) {
+			paperAirplane_[i]->Update();
+		}
+		else {
+			paperCircle_[i]->Update();
+		}
 	}
-	debugText_->SetPos(0, 80);
-	debugText_->Printf("PaperTrans[0] = (%f,%f,%f)\nPaperTrans[1] = (%f,%f,%f)", trans[0].x, trans[0].y, trans[0].z, trans[1].x, trans[1].y, trans[1].z);
 
 };
 
@@ -56,7 +73,12 @@ void Paper::Set() {
 
 		SetTrans(i);
 		SetRot(i);
-		paperAirplane_[i]->Initialize(planeModel_,planeTextureHandle_,trans[i],rot[i]);
+		if (type[i] == 0) {
+			paperAirplane_[i]->Initialize(planeModel_, planeTextureHandle_, trans[i], rot[i]);
+		}
+		else {
+			paperCircle_[i]->Initialize(planeModel_, planeTextureHandle_, trans[i], rot[i]);
+		}
 
 	}
 
@@ -99,15 +121,11 @@ void Paper::SetRot(int i) {
 	//メルセンヌ・ツイスター
 	std::mt19937_64 engine(seed_gen());
 	//乱数範囲(回転角用)
-	std::uniform_real_distribution<float> rotDist(0.0f, rotdiff);
+	std::uniform_real_distribution<float> rotDist(0.0f, 2 * PI);
 
 
 	//乱数を配置する間隔の最大値と最小値で乱数を取る(*100と/100はint→float)
 	rot[i].y = rotDist(engine);
-
-	if (i == 0) {
-		rot[0].y = maxLeft;
-	}
 
 	rot->x = rotX;
 	rot->z = rotZ;
@@ -118,9 +136,15 @@ void Paper::SetRot(int i) {
 //描画
 void Paper::Draw(ViewProjection& viewProjection_) {
 
+
 	if (flag != 0) {
 		for (int i = 0; i < max; i++) {
-			paperAirplane_[i]->Draw(viewProjection_);
+			if (type[i] == 0) {
+				paperAirplane_[i]->Draw(viewProjection_);
+			}
+			else {
+				paperCircle_[i]->Draw(viewProjection_);
+			}
 		}
 	}
 	////3Dモデルを描画
@@ -131,10 +155,24 @@ void Paper::Draw(ViewProjection& viewProjection_) {
 Vector3 Paper::GetWorldPosition(int i) {
 
 	Vector3 Pos = trans[i];
+
+	if (type[i] == 0) {
+		Pos = paperAirplane_[i]->GetWorldPosition();
+	}
+	else {
+		Pos = paperCircle_[i]->GetWorldPosition();
+	}
+
 	return Pos;
 
 }
 
-void Paper::OnCollision(int i) {
-	paperAirplane_[i]->OnCollision();
+void Paper::OnCollision(int i, float windPower, Vector3 fanTrans) {
+	if (type[i] == 0) {
+		paperAirplane_[i]->OnCollision(windPower,fanTrans);
+	}
+	else {
+		paperCircle_[i]->OnCollision();
+	}
 }
+

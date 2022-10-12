@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "Affine.h"
+#include "DebugText.h"
 
 class PaperAirplane
 {
@@ -17,10 +18,18 @@ public:
 	//bool IsDead() const { return isDead_; }
 
 	//衝突したら呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision(float windPower, Vector3 fanTrans);
 
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
+
+	//速度計さん
+	void CalculationSpeed();
+
+	void Move();
+
+	//速度などをセット
+	void Set(float windPower, Vector3 fanTrans);
 
 private:
 	//ワールド変換データ
@@ -29,6 +38,7 @@ private:
 	Model* model_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
+	DebugText* debugText_ = nullptr;
 
 	//寿命
 	static const int32_t kLifeTime = 60 * 5;
@@ -38,9 +48,23 @@ private:
 	bool isDead_ = false;
 
 	//0 停止 1 移動
-	int move = 0;
+	int move_ = 0;
 
 	//アフィン行列
 	Affine* affine_ = nullptr;
+
+	//統合スピード
+	Vector3 velocity_ = { 0,0,0 };
+
+public:
+
+	//通常スピード
+	float speed_ = 0.1;
+
+	//落下スピード
+	float fallSpeed_ = 0.1;
+
+	//減速率
+	float decelerationRate_ = 0.001;
 };
 

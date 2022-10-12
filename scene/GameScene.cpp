@@ -63,6 +63,53 @@ void GameScene::Update() {
 
 	paper_->Update();
 
+	//カメラ
+
+	if (input_->PushKey(DIK_0)) {
+		cameramode = 0;
+	}
+	else if (input_->PushKey(DIK_1)){
+		cameramode = 1;
+	}
+	else if (input_->PushKey(DIK_2)) {
+		cameramode = 2;
+	}
+
+	if (cameramode == 0) {
+		//視点座標
+		viewProjection_.eye = { 0,30,-30 };
+		viewProjection_.target = { 0, 0,0 };
+
+
+		viewProjection_.eye.z = paper_->GetWorldPosition(touchPaperNum).z + (-30);
+		viewProjection_.target.z = paper_->GetWorldPosition(touchPaperNum).z;
+		viewProjection_.Initialize();
+
+	}
+	else if (cameramode == 1) {
+		//視点座標
+		viewProjection_.eye = { 50,0,3 };
+		//viewProjection_.target = { 30, 0,0 };
+
+		viewProjection_.eye.z = paper_->GetWorldPosition(touchPaperNum).z;
+		viewProjection_.target.z = paper_->GetWorldPosition(touchPaperNum).z;
+
+		viewProjection_.Initialize();
+	}
+	else if (cameramode == 2) {
+		//視点座標
+		viewProjection_.eye = { 500,0,3 };
+		viewProjection_.target = { 30, 0,0 };
+
+		viewProjection_.eye.z = paper_->GetWorldPosition(touchPaperNum).z;
+		viewProjection_.target.z = paper_->GetWorldPosition(touchPaperNum).z;
+
+		viewProjection_.Initialize();
+	}
+
+	debugText_->SetPos(0, 80);
+	debugText_->Printf("PaperTrans[%d] = (%f,%f,%f)", touchPaperNum,paper_->GetWorldPosition(touchPaperNum).x, paper_->GetWorldPosition(touchPaperNum).y, paper_->GetWorldPosition(touchPaperNum).z);
+
 }
 
 void GameScene::Draw() {
@@ -210,7 +257,9 @@ void GameScene::CheckAllCollisions() {
 				//自弾の衝突時コールバックを呼び出す
 				fanwind->OnCollision();
 				//敵弾の衝突時コールバックを呼び出す
-				paper_->OnCollision(i);
+				paper_->OnCollision(i,fan_->GetWindPower(), fan_->GetWorldPosition());
+
+				touchPaperNum = i;
 
 				//debugText_->SetPos(0, 40);
 				//debugText_->Printf("atatta");

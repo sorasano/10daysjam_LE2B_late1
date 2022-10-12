@@ -34,7 +34,7 @@ void Fan::Update() {
 	debugText_->SetPos(0, 0);
 	debugText_->Printf("FanPos(%f,%f,%f)", worldtransform_.translation_.x, worldtransform_.translation_.y, worldtransform_.translation_.z);
 	debugText_->SetPos(0, 20);
-	debugText_->Printf("mode = %d", mode);
+	debugText_->Printf("power = %f", windPower);
 
 	Rotate();
 
@@ -151,6 +151,11 @@ Vector3 Fan::GetWorldPosition() {
 
 void Fan::OnCollision() {
 
+}
+
+float Fan::GetWindPower()
+{
+	return windPower;
 }
 
 void Fan::Move() {

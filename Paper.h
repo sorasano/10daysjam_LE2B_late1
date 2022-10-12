@@ -37,7 +37,7 @@ public:
 
 	Vector3 GetWorldPosition(int i);
 
-	void OnCollision(int i);
+	void OnCollision(int i, float windPower, Vector3 fanTrans);
 
 private:
 	//ワールド変換データ
@@ -70,6 +70,9 @@ private:
 	//角度
 	Vector3 rot[10] = {};
 
+	//飛行機型か丸型か
+	int type[10] = {0,0,1,0,0,1,0,0,1,0};//0飛行機 1丸
+
 	//変わらない値(統一)
 	float transY = 0;
 	float transZ = 5;
@@ -92,10 +95,6 @@ private:
 
 	//サイズ
 	int size = 2;
-
-	//飛行機型か丸型か
-	int type = 0;//0飛行機 1丸
-
 
 };
 

@@ -69,6 +69,9 @@ private: // メンバ変数
 	//デバックカメラ
 	DebugCamera* debugCamera_ = nullptr;
 
+	//カメラモード
+	int cameramode = 0;//0 上から //1横から
+
 	//デバックカメラ有効
 	bool isDebugCameraActive_ = false;
 
@@ -77,6 +80,9 @@ private: // メンバ変数
 
 	//紙
 	Paper* paper_ = nullptr;
+
+	//何番の紙飛行機が当たったか
+	int touchPaperNum = 0;
 
 	////アフィン変換
 	//Affine* affine_ = nullptr;

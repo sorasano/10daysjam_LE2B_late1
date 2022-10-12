@@ -1,6 +1,8 @@
 #include "PaperAirplane.h"
 #include "GameScene.h"
 
+const double PI = 3.141592653589;
+
 void PaperAirplane::Initialize(Model* model, uint32_t textureHandle,Vector3 trans,Vector3 rot) {
 
 	//NULLポインタチェック
@@ -9,7 +11,7 @@ void PaperAirplane::Initialize(Model* model, uint32_t textureHandle,Vector3 tran
 	model_ = model;
 	//テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("paperAirplane.png");
-
+	
 	//アフィン行列
 	affine_ = new Affine();
 
@@ -22,6 +24,8 @@ void PaperAirplane::Initialize(Model* model, uint32_t textureHandle,Vector3 tran
 	//行列更新
 	worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)), affine_->Trans(worldtransform_.translation_));
 	worldtransform_.TransferMatrix();
+
+	debugText_ = DebugText::GetInstance();
 
 }
 
@@ -37,14 +41,10 @@ void PaperAirplane::Update() {
 	//	isDead_ = true;
 	//}
 
-	Vector3 velocity_ = {0,0,1};
+	CalculationSpeed();
 
-	if (move == 1) {
-		//行列更新
-		worldtransform_.translation_ += velocity_;
-		worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)), affine_->Trans(worldtransform_.translation_));
-		worldtransform_.TransferMatrix();
-
+	if (move_ == 1) {
+		Move();
 	}
 
 }
@@ -56,8 +56,9 @@ void PaperAirplane::Draw(const ViewProjection& viewProjection) {
 
 }
 
-void PaperAirplane::OnCollision() {
-	move = 1;
+void PaperAirplane::OnCollision(float windPower, Vector3 fanTrans) {
+	move_ = 1;
+	Set(windPower,fanTrans);
 }
 
 Vector3 PaperAirplane::GetWorldPosition() {
@@ -69,4 +70,50 @@ Vector3 PaperAirplane::GetWorldPosition() {
 	worldPos.z = worldtransform_.matWorld_.m[3][2];
 
 	return worldPos;
+}
+
+void PaperAirplane::CalculationSpeed()
+{
+	//速度を計算
+	velocity_ = {0,-fallSpeed_,speed_};
+
+	//減速
+	if (speed_ >= 0.1) {
+		speed_ -= decelerationRate_;
+	}
+}
+
+void PaperAirplane::Move()
+{
+
+	//行列更新
+	worldtransform_.translation_ += velocity_;
+	worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)), affine_->Trans(worldtransform_.translation_));
+	worldtransform_.TransferMatrix();
+
+}
+
+void PaperAirplane::Set(float windPower,Vector3 fanTrans)
+{
+	//速度,落下スピード,減速をセット
+
+	//風速をそのままスピードに代入
+	speed_ = (windPower / 10) + 0.01;//0.1～1.1の範囲
+
+	//紙飛行機と扇風機の座標の差が減速する
+	//if文でマイナスにならないようにする
+	if ((fanTrans.x - worldtransform_.translation_.x) > 0) {
+		fallSpeed_ = (fanTrans.x - worldtransform_.translation_.x) / 10;
+	}
+	else {
+		fallSpeed_ = (worldtransform_.translation_.x- fanTrans.x) / 10;
+	}
+
+	//減速率を計算,角度が0(まっすぐ)に近いほど減速率は少ない
+	if (worldtransform_.rotation_.y < PI) {
+		decelerationRate_ = worldtransform_.rotation_.y / 100;
+	}
+	else {
+		decelerationRate_ = (PI - worldtransform_.rotation_.y) / 100;
+	}
 }
