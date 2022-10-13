@@ -92,8 +92,10 @@ private: // メンバ変数
 	//地面についてるか
 	int isLand = 0;
 
-	////何番をもう打ったか
-	//int beginshot[3] = {};
+	//何番をもう打ったか
+	int beginshot[3] = {};
+
+	float highScore = 0;
 
 	//////アフィン変換
 	//Affine* affine_ = nullptr;

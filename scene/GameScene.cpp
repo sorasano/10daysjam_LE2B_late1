@@ -59,19 +59,36 @@ void GameScene::Update() {
 	debugCamera_->Update();
 
 	if (scene == 0) {
-
+		debugText_->SetPos(0, 0);
+		debugText_->Printf("Preas push SPACE");
 	}
 	else if (scene == 1) {
 
 		cameramode = 0;
 		fan_->Update();
 		paper_->Update();
+		debugText_->SetPos(0, 0);
+		debugText_->Printf("Preas HOLD AND RELEASE SPACE");
+		debugText_->SetPos(0, 20);
+		debugText_->Printf("POWER = %f (MIN 0 ,MAX 10)",fan_->GetWindPower());
+
+		if (shot >= 1) {
+			debugText_->SetPos(0, 60);
+			debugText_->Printf("SCORE 1 = %f", paper_->GetWorldPosition(beginshot[0]).z);
+			if (shot >= 2) {
+				debugText_->SetPos(0, 80);
+				debugText_->Printf("SCORE 2 = %f", paper_->GetWorldPosition(beginshot[1]).z);
+			}
+		}
 
 	}
 	else if (scene == 2) {
 
 		paper_->Update();
 		fan_->Update();
+
+		debugText_->SetPos(0, 0);
+		debugText_->Printf("SCORE = %fM", paper_->GetWorldPosition(touchPaperNum).z);
 
 		if (input_->PushKey(DIK_1)) {
 			cameramode = 1;
@@ -86,6 +103,7 @@ void GameScene::Update() {
 
 			if (isLand == 0) {
 				isLand = 1;
+				beginshot[shot] = touchPaperNum;
 				shot++;
 				paper_->SetIsCol(touchPaperNum);
 			}
@@ -106,7 +124,17 @@ void GameScene::Update() {
 
 	}
 	else if (scene == 3) {
+		debugText_->SetPos(0, 0);
+		debugText_->Printf("Preas push SPACE");
 
+		debugText_->SetPos(0, 60);
+		debugText_->Printf("SCORE 1 = %f", paper_->GetWorldPosition(beginshot[0]).z);
+		debugText_->SetPos(0, 80);
+		debugText_->Printf("SCORE 2 = %f", paper_->GetWorldPosition(beginshot[1]).z);
+		debugText_->SetPos(0, 100);
+		debugText_->Printf("SCORE 3 = %f", paper_->GetWorldPosition(beginshot[2]).z);
+		debugText_->SetPos(0, 120);
+		debugText_->Printf("HIGH SCORE = %f",highScore);
 	}
 
 	//カメラ
@@ -153,15 +181,15 @@ void GameScene::Update() {
 		viewProjection_.Initialize();
 	}
 
-	debugText_->SetPos(0, 80);
-	debugText_->Printf("PaperTrans[%d] = (%f,%f,%f)", touchPaperNum, paper_->GetWorldPosition(touchPaperNum).x, paper_->GetWorldPosition(touchPaperNum).y, paper_->GetWorldPosition(touchPaperNum).z);
+	//debugText_->SetPos(0, 80);
+	//debugText_->Printf("PaperTrans[%d] = (%f,%f,%f)", touchPaperNum, paper_->GetWorldPosition(touchPaperNum).x, paper_->GetWorldPosition(touchPaperNum).y, paper_->GetWorldPosition(touchPaperNum).z);
 
-	debugText_->SetPos(0, 140);
-	debugText_->Printf("scene = %d", scene);
-	debugText_->SetPos(0, 160);
-	debugText_->Printf("shot = %d", shot);
-	debugText_->SetPos(0, 180);
-	debugText_->Printf("isLand = %d", isLand);
+	//debugText_->SetPos(0, 140);
+	//debugText_->Printf("scene = %d", scene);
+	//debugText_->SetPos(0, 160);
+	//debugText_->Printf("shot = %d", shot);
+	//debugText_->SetPos(0, 180);
+	//debugText_->Printf("isLand = %d", isLand);
 
 	//シーン切り替え
 
@@ -192,6 +220,18 @@ void GameScene::Update() {
 			shot = 0;
 			paper_->Reset();
 			fan_->Reset();
+
+		}
+
+		if (paper_->GetWorldPosition(beginshot[0]).z > paper_->GetWorldPosition(beginshot[1]).z) {
+			highScore = paper_->GetWorldPosition(beginshot[0]).z;
+		}
+		else {
+			highScore = paper_->GetWorldPosition(beginshot[1]).z;
+		}
+
+		if (paper_->GetWorldPosition(beginshot[2]).z > highScore) {
+			highScore = paper_->GetWorldPosition(beginshot[2]).z;
 		}
 	}
 

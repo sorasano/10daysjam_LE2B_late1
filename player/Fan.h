@@ -72,11 +72,11 @@ private:
 	int mode = 1;
 
 	//キャラクターの移動速さ
-	const float speed = 0.1f;
+	const float speed = 0.2f;
 
 	//移動限界距離
-	int moveLimitLeft = -20;
-	int moveLimitRight = 20;
+	int moveLimitLeft = -30;
+	int moveLimitRight = 30;
 
 	//風量
 	float windPower = 0;

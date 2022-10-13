@@ -46,8 +46,8 @@ void Paper::Initialize(Model* planeModel, Model* circleModel, uint32_t planeText
 //XV
 void Paper::Update() {
 
-	debugText_->SetPos(0, 120);
-	debugText_->Printf("PaperRot[0] = (%f,%f,%f)\nPaperRot[1] = (%f,%f,%f)", rot[0].x, rot[0].y, rot[0].z, rot[1].x, rot[1].y, rot[1].z);
+	//debugText_->SetPos(0, 120);
+	//debugText_->Printf("PaperRot[0] = (%f,%f,%f)\nPaperRot[1] = (%f,%f,%f)", rot[0].x, rot[0].y, rot[0].z, rot[1].x, rot[1].y, rot[1].z);
 
 	flag++;
 

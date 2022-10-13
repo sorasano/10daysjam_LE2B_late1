@@ -31,10 +31,10 @@ void Fan::Update() {
 		});
 
 	Move();
-	debugText_->SetPos(0, 0);
-	debugText_->Printf("FanPos(%f,%f,%f)", worldtransform_.translation_.x, worldtransform_.translation_.y, worldtransform_.translation_.z);
-	debugText_->SetPos(0, 20);
-	debugText_->Printf("power = %f", windPower);
+	//debugText_->SetPos(0, 0);
+	//debugText_->Printf("FanPos(%f,%f,%f)", worldtransform_.translation_.x, worldtransform_.translation_.y, worldtransform_.translation_.z);
+	//debugText_->SetPos(0, 20);
+	//debugText_->Printf("power = %f", windPower);
 
 	Rotate();
 
@@ -110,8 +110,8 @@ void Fan::Attack() {
 		push = 0;
 	}
 
-	debugText_->SetPos(0, 100);
-	debugText_->Printf("%d", push);
+	//debugText_->SetPos(0, 100);
+	//debugText_->Printf("%d", push);
 
 	//’â~’†‚ÉƒQ[ƒW‚ğ•t‚¯‚é
 	if (mode == 0) {
