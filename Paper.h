@@ -39,6 +39,14 @@ public:
 
 	void OnCollision(int i, float windPower, Vector3 fanTrans);
 
+	bool GetIsLanding(int i) const { return isLanding_[i]; }
+
+	void Reset();
+
+	int GetIsCol(int i) { return isCol[i]; }
+
+	void SetIsCol(int i);
+
 private:
 	//ワールド変換データ
 	WorldTransform worldtransform_;
@@ -65,6 +73,9 @@ private:
 	
 	int flag = 0;
 
+	//あったったか
+	int isCol[10] = {};
+
 	//座標
 	Vector3 trans[10] = {};
 	//角度
@@ -72,6 +83,9 @@ private:
 
 	//飛行機型か丸型か
 	int type[10] = {0,0,1,0,0,1,0,0,1,0};//0飛行機 1丸
+
+	//落下したか
+	int isLanding_[10] = {};
 
 	//変わらない値(統一)
 	float transY = 0;
@@ -81,7 +95,7 @@ private:
 	float rotZ = 0;
 
 	//配置する位置の端
-	float maxLeft = -20.0f;
+	float maxLeft = -30.0f;
 	float maxRight = 20.0f;
 
 	//配置する最大間隔
@@ -94,7 +108,7 @@ private:
 	float beforeTrans = 0;
 
 	//サイズ
-	int size = 2;
+	int size = 4.5;
 
 };
 

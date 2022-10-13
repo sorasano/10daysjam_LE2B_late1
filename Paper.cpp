@@ -58,11 +58,17 @@ void Paper::Update() {
 	for(int i = 0;i < max;i++){
 		if (type[i] == 0) {
 			paperAirplane_[i]->Update();
+			isLanding_[i] = paperAirplane_[i]->GetIsLanding();
 		}
 		else {
 			paperCircle_[i]->Update();
+			isLanding_[i] = paperCircle_[i]->GetIsLanding();
 		}
+
+
+
 	}
+
 
 };
 
@@ -172,7 +178,26 @@ void Paper::OnCollision(int i, float windPower, Vector3 fanTrans) {
 		paperAirplane_[i]->OnCollision(windPower,fanTrans);
 	}
 	else {
-		paperCircle_[i]->OnCollision();
+		paperCircle_[i]->OnCollision(windPower, fanTrans);
 	}
+
+	isCol[i] = 1;
+
+}
+
+void Paper::Reset()
+{
+	flag = 0;
+	beforeTrans = 0;
+	for (int i = 0; i < max; i++) {
+		paperAirplane_[i]->Reset();
+		paperCircle_[i]->Reset();
+	}
+}
+
+void Paper::SetIsCol(int i)
+{
+	isCol[i] = 2;
+
 }
 

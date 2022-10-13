@@ -1,7 +1,7 @@
 #include "PaperAirplane.h"
 #include "GameScene.h"
 
-const double PI = 3.141592653589;
+const float PI = 3.1415926535;
 
 void PaperAirplane::Initialize(Model* model, uint32_t textureHandle,Vector3 trans,Vector3 rot) {
 
@@ -40,12 +40,16 @@ void PaperAirplane::Update() {
 	//if (--deathTimer_ <= 0) {
 	//	isDead_ = true;
 	//}
+	
 
 	CalculationSpeed();
 
 	if (move_ == 1) {
 		Move();
 	}
+
+	//落下判定
+	LandingJudge();
 
 }
 
@@ -100,7 +104,7 @@ void PaperAirplane::Set(float windPower,Vector3 fanTrans)
 	//風速をそのままスピードに代入
 	speed_ = (windPower / 10) + 0.01;//0.1～1.1の範囲
 
-	//紙飛行機と扇風機の座標の差が減速する
+	//紙飛行機と扇風機の座標の差が落下スピード
 	//if文でマイナスにならないようにする
 	if ((fanTrans.x - worldtransform_.translation_.x) > 0) {
 		fallSpeed_ = (fanTrans.x - worldtransform_.translation_.x) / 10;
@@ -109,11 +113,53 @@ void PaperAirplane::Set(float windPower,Vector3 fanTrans)
 		fallSpeed_ = (worldtransform_.translation_.x- fanTrans.x) / 10;
 	}
 
+	if (fallSpeed_ <= 0.02) {
+		fallSpeed_ = 0.02;
+	}
+
+	////減速率を計算,角度が0(まっすぐ)に近いほど減速率は少ない
+	//if (worldtransform_.rotation_.y < PI) {
+	//	decelerationRate_ = worldtransform_.rotation_.y / 100;
+	//}
+	//else {
+	//	decelerationRate_ = (PI - worldtransform_.rotation_.y) / 100;
+	//}
+
 	//減速率を計算,角度が0(まっすぐ)に近いほど減速率は少ない
 	if (worldtransform_.rotation_.y < PI) {
-		decelerationRate_ = worldtransform_.rotation_.y / 100;
+		decelerationRate_ = (worldtransform_.rotation_.y);
 	}
 	else {
-		decelerationRate_ = (PI - worldtransform_.rotation_.y) / 100;
+		decelerationRate_ = (worldtransform_.rotation_.y - PI);
+
+		if (decelerationRate_ < (PI / 2)) {
+			decelerationRate_ = (PI - decelerationRate_);
+		}
+		else {
+			decelerationRate_ = (PI - decelerationRate_);
+			//decelerationRate_ += (decelerationRate_ + decelerationRate_);
+		}
+
 	}
+
+	decelerationRate_ = decelerationRate_ / 100;
 }
+
+void PaperAirplane::LandingJudge()
+{
+
+	if (worldtransform_.translation_.y <= endY) {
+		isLanding_ = 1;
+		move_ = 0;
+	}
+
+}
+
+void PaperAirplane::Reset()
+{
+	//0 停止 1 移動
+	move_ = 0;
+	isLanding_ = 0;
+
+}
+

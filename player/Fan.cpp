@@ -95,7 +95,9 @@ void Fan::Rotate() {
 
 void Fan::Attack() {
 
-	if (input_->PushKey(DIK_SPACE)) {
+	keyCoolTime--;
+
+	if (input_->PushKey(DIK_SPACE) && keyCoolTime <= 0) {
 
 		push = 1;
 
@@ -132,7 +134,7 @@ void Fan::Attack() {
 		//’e‚ğ“o˜^‚·‚é
 		bullets_.push_back(std::move(newBullet));
 
-		mode = 4;
+		mode = 3;
 
 	}
 
@@ -156,6 +158,25 @@ void Fan::OnCollision() {
 float Fan::GetWindPower()
 {
 	return windPower;
+}
+
+void Fan::Reset()
+{
+	////ƒ[ƒ‹ƒh•ÏŠ·‰Šú‰»
+	//worldtransform_.translation_ = Vector3(0,0,0);
+	//worldtransform_.matWorld_ = affine_->World(affine_->Scale(affine_->Scale_), affine_->Rot(affine_->RotX(worldtransform_.rotation_.x), affine_->RotY(worldtransform_.rotation_.y), affine_->RotZ(worldtransform_.rotation_.z)), affine_->Trans(worldtransform_.translation_));
+	//worldtransform_.TransferMatrix();
+	////ƒ[ƒ‹ƒh•ÏŠ·‰Šú‰»
+	//worldtransform_.Initialize();
+
+	mode = 1;
+	push = 0;
+	keyCoolTime = 100;
+}
+
+void Fan::SetMode(int i)
+{
+	mode = i;
 }
 
 void Fan::Move() {

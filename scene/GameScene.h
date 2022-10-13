@@ -84,7 +84,18 @@ private: // メンバ変数
 	//何番の紙飛行機が当たったか
 	int touchPaperNum = 0;
 
-	////アフィン変換
+	//0　タイトル　1射撃準備 2紙飛行機飛び 3リザルト
+	int scene = 0;
+
+	//何回打ったか
+	int shot = 0;
+	//地面についてるか
+	int isLand = 0;
+
+	////何番をもう打ったか
+	//int beginshot[3] = {};
+
+	//////アフィン変換
 	//Affine* affine_ = nullptr;
 
 	/// <summary>

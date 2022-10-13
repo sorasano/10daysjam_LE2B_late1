@@ -38,7 +38,7 @@ void GameScene::Initialize() {
 	paper_->Initialize(model_, model_, textureHandle_, textureHandle_);
 
 	//視点座標
-	viewProjection_.eye = {0,30,-30};
+	viewProjection_.eye = { 0,30,-30 };
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	//デバックカメラの生成
@@ -58,22 +58,68 @@ void GameScene::Update() {
 	//デバックカメラの更新
 	debugCamera_->Update();
 
-	//自キャラの更新
-	fan_->Update();
+	if (scene == 0) {
 
-	paper_->Update();
+	}
+	else if (scene == 1) {
+
+		cameramode = 0;
+		fan_->Update();
+		paper_->Update();
+
+	}
+	else if (scene == 2) {
+
+		paper_->Update();
+		fan_->Update();
+
+		if (input_->PushKey(DIK_1)) {
+			cameramode = 1;
+		}
+		else if (input_->PushKey(DIK_2)) {
+			cameramode = 2;
+		}
+
+		//地面についたらshotを増やす,以前に落ちた弾は除外
+
+		if (paper_->GetIsLanding(touchPaperNum) == 1) {
+
+			if (isLand == 0) {
+				isLand = 1;
+				shot++;
+				paper_->SetIsCol(touchPaperNum);
+			}
+
+		}
+
+
+
+
+		////弾を外した場合
+		//const std::list<std::unique_ptr<FanWind>>& fanWinds = fan_->GetBullets();
+
+		//for (const std::unique_ptr<FanWind>& fanwind : fanWinds) {
+		//	if (fanwind->GetWorldPosition().z >= 100) {
+		//		shot++;
+		//	}
+		//}
+
+	}
+	else if (scene == 3) {
+
+	}
 
 	//カメラ
 
-	if (input_->PushKey(DIK_0)) {
-		cameramode = 0;
-	}
-	else if (input_->PushKey(DIK_1)){
-		cameramode = 1;
-	}
-	else if (input_->PushKey(DIK_2)) {
-		cameramode = 2;
-	}
+	//if (input_->PushKey(DIK_0)) {
+	//	cameramode = 0;
+	//}
+	//else if (input_->PushKey(DIK_1)) {
+	//	cameramode = 1;
+	//}
+	//else if (input_->PushKey(DIK_2)) {
+	//	cameramode = 2;
+	//}
 
 	if (cameramode == 0) {
 		//視点座標
@@ -81,8 +127,8 @@ void GameScene::Update() {
 		viewProjection_.target = { 0, 0,0 };
 
 
-		viewProjection_.eye.z = paper_->GetWorldPosition(touchPaperNum).z + (-30);
-		viewProjection_.target.z = paper_->GetWorldPosition(touchPaperNum).z;
+		//viewProjection_.eye.z = paper_->GetWorldPosition(touchPaperNum).z + (-30);
+		//viewProjection_.target.z = paper_->GetWorldPosition(touchPaperNum).z;
 		viewProjection_.Initialize();
 
 	}
@@ -108,7 +154,47 @@ void GameScene::Update() {
 	}
 
 	debugText_->SetPos(0, 80);
-	debugText_->Printf("PaperTrans[%d] = (%f,%f,%f)", touchPaperNum,paper_->GetWorldPosition(touchPaperNum).x, paper_->GetWorldPosition(touchPaperNum).y, paper_->GetWorldPosition(touchPaperNum).z);
+	debugText_->Printf("PaperTrans[%d] = (%f,%f,%f)", touchPaperNum, paper_->GetWorldPosition(touchPaperNum).x, paper_->GetWorldPosition(touchPaperNum).y, paper_->GetWorldPosition(touchPaperNum).z);
+
+	debugText_->SetPos(0, 140);
+	debugText_->Printf("scene = %d", scene);
+	debugText_->SetPos(0, 160);
+	debugText_->Printf("shot = %d", shot);
+	debugText_->SetPos(0, 180);
+	debugText_->Printf("isLand = %d", isLand);
+
+	//シーン切り替え
+
+	if (scene == 0) {
+		if (input_->TriggerKey(DIK_SPACE)) {
+			scene = 1;
+		}
+	}
+	else if (scene == 1 && paper_->GetIsCol(touchPaperNum) == 1) {
+		scene = 2;
+		cameramode = 2;
+	}
+	else if (scene == 2 && shot < 3 && isLand == 1) {
+
+		scene = 1;
+		fan_->Reset();
+		isLand = 0;
+	}
+	else if (scene == 2 && shot >= 3 && isLand == 1) {
+
+		scene = 3;
+		isLand = 0;
+
+	}
+	else if (scene == 3) {
+		if (input_->TriggerKey(DIK_SPACE)) {
+			scene = 0;
+			shot = 0;
+			paper_->Reset();
+			fan_->Reset();
+		}
+	}
+
 
 }
 
@@ -139,12 +225,15 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	//自キャラの更新
-	fan_->Draw(viewProjection_);
+	if (scene == 1 || scene == 2 || scene == 3) {
 
-	//紙描画
-	paper_->Draw(viewProjection_);
+		//自キャラの更新
+		fan_->Draw(viewProjection_);
 
+		//紙描画
+		paper_->Draw(viewProjection_);
+
+	}
 	//当たり判定
 	CheckAllCollisions();
 
@@ -181,67 +270,12 @@ void GameScene::CheckAllCollisions() {
 
 	//自弾リストの取得
 	const std::list<std::unique_ptr<FanWind>>& fanWinds = fan_->GetBullets();
-//
-//#pragma region 自キャラと敵弾の当たり判定
-//
-//	//自キャラの座標
-//	posA = fan_->GetWorldPosition();
-//	//自キャラと敵弾すべての当たり判定
-//	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
-//		//敵弾の座標
-//		posB = bullet->GetWorldPosition();
-//
-//		//半径
-//		float posAR = 1;
-//		float posBR = 1;
-//
-//		if (((posA.x - posB.x) * (posA.x - posB.x)) + ((posA.y - posB.y) * (posA.y - posB.y)) + ((posA.z - posB.z) * (posA.z - posB.z)) <= ((posAR + posBR) * (posAR + posBR))) {
-//
-//			//自キャラの衝突時コールバックを呼び出す
-//			fan_->OnCollision();
-//			//敵弾の衝突時コールバックを呼び出す
-//			bullet->OnCollision();
-//
-//			//debugText_->SetPos(0, 40);
-//			//debugText_->Printf("atatta");
-//
-//		}
-//	}
-//#pragma endregion
-//
-//#pragma region 自弾と敵キャラの当たり判定
-//
-//	//自弾の座標
-//	posA = enemy_->GetWorldPosition();
-//	//自弾と敵の当たり判定
-//	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
-//		//敵の座標
-//		posB = bullet->GetWorldPosition();
-//
-//		//半径
-//		float posAR = 1;
-//		float posBR = 1;
-//
-//		if (((posA.x - posB.x) * (posA.x - posB.x)) + ((posA.y - posB.y) * (posA.y - posB.y)) + ((posA.z - posB.z) * (posA.z - posB.z)) <= ((posAR + posBR) * (posAR + posBR))) {
-//
-//			//自弾の衝突時コールバックを呼び出す
-//			bullet->OnCollision();
-//			//敵の衝突時コールバックを呼び出す
-//			enemy_->OnCollision();
-//
-//			//debugText_->SetPos(0, 40);
-//			//debugText_->Printf("atatta");
-//
-//		}
-//	}
-//
-//#pragma endregion
-//
+
 #pragma region 自弾と敵弾の当たり判定
 
 	//自弾と敵弾の当たり判定
 	for (const std::unique_ptr<FanWind>& fanwind : fanWinds) {
-		for (int i = 0; i < 10;i++) {
+		for (int i = 0; i < 10; i++) {
 
 			//自弾の座標
 			posA = fanwind->GetWorldPosition();
@@ -257,7 +291,7 @@ void GameScene::CheckAllCollisions() {
 				//自弾の衝突時コールバックを呼び出す
 				fanwind->OnCollision();
 				//敵弾の衝突時コールバックを呼び出す
-				paper_->OnCollision(i,fan_->GetWindPower(), fan_->GetWorldPosition());
+				paper_->OnCollision(i, fan_->GetWindPower(), fan_->GetWorldPosition());
 
 				touchPaperNum = i;
 

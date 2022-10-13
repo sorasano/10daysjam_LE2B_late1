@@ -31,6 +31,11 @@ public:
 	//速度などをセット
 	void Set(float windPower, Vector3 fanTrans);
 
+	bool GetIsLanding() const { return isLanding_; }
+
+	void LandingJudge();
+
+	void Reset();
 private:
 	//ワールド変換データ
 	WorldTransform worldtransform_;
@@ -56,8 +61,10 @@ private:
 	//統合スピード
 	Vector3 velocity_ = { 0,0,0 };
 
-public:
+	float endY = -20;
+	bool isLanding_ = 0;
 
+private:
 	//通常スピード
 	float speed_ = 0.1;
 

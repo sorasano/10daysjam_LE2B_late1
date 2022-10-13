@@ -10,7 +10,6 @@
 #include <memory>
 #include <list>
 #include "Matrix4.h"
-
 class Fan {
 
 public:
@@ -49,6 +48,12 @@ public:
 
 	float GetWindPower();
 
+	int GetMode() { return mode; }
+
+	void Reset();
+
+	void SetMode(int i);
+
 private:
 	//ワールド変換データ
 	WorldTransform worldtransform_;
@@ -81,6 +86,8 @@ private:
 	float maxPower = 10;
 
 	int push = 0;
+
+	int keyCoolTime = 100;
 
 private:
 	//弾
